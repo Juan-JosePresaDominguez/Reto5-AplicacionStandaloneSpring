@@ -5,22 +5,26 @@ import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.modelos.clientes.Empresa;
 import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
 import es.netmind.mypersonalbankapi.properties.PropertyValues;
+import lombok.Setter;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Setter
 public class ClientesDBRepo implements IClientesRepo {
 
     private static ClientesDBRepo instance;
 
-    private static String db_url = null;
+    //private static String db_url = null;
+    private String db_url = null;
 
-    public ClientesDBRepo() throws Exception {
-        PropertyValues props = new PropertyValues();
-        db_url = props.getPropValues().getProperty("db_url");
-    }
+    //La URL se debe definir en RepoConfig.java, sino se produce el error "java.sql.SQLException: The url cannot be null"
+//    public ClientesDBRepo() throws Exception {
+//        PropertyValues props = new PropertyValues();
+//        db_url = props.getPropValues().getProperty("db_url");
+//    }
 
     public static ClientesDBRepo getInstance() {
         if (instance == null) {

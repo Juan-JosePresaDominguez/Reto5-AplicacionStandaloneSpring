@@ -1,28 +1,41 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
+import es.netmind.mypersonalbankapi.config.SpringConfig;
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.modelos.clientes.Empresa;
 import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {SpringConfig.class})
 class ClientesDBRepoTest {
 
+    @Autowired
     private IClientesRepo repo;
 
-    @BeforeEach
-    void sepUp() throws Exception {
-        repo = new ClientesDBRepo();
+    @Test
+    void testBeans() throws Exception {
+        assertThat(repo, notNullValue());
+        System.out.println(repo.getClientById(3));
     }
+
+//    @BeforeEach
+//    void setUp() throws Exception {
+//        repo = new ClientesDBRepo();
+//    }
 
     @Test
     void dadosClientes_cuandogetAll_entoncesClientes() throws Exception {
