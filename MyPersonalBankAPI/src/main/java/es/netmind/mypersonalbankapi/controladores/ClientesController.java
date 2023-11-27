@@ -5,15 +5,22 @@ import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.modelos.prestamos.Prestamo;
 import es.netmind.mypersonalbankapi.persistencia.*;
 import es.netmind.mypersonalbankapi.utils.ClientesUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
+//@Component
+@Controller
 public class ClientesController {
 
     //private static IClientesRepo clientesRepo = ClientesInMemoryRepo.getInstance();
-    private static IClientesRepo clientesRepo = ClientesDBRepo.getInstance();
+    //private static IClientesRepo clientesRepo = ClientesInMemoryRepo.getInstance();   // RETO 4 - SGBD
+    @Autowired
+    private static IClientesRepo clientesRepo;         // RETO 5 - SPRING
     private static ICuentasRepo cuentasRepo = CuentasInMemoryRepo.getInstance();
     private static IPrestamosRepo prestamosRepo = PrestamosInMemoryRepo.getInstance();
 
@@ -35,10 +42,12 @@ public class ClientesController {
         }
     }
 
+    @Autowired
     public static int numeroClientes() throws Exception {
         return clientesRepo.getAll().size();
     }
 
+    @Autowired
     public static void mostrarDetalle(Integer uid) {
         System.out.println("\nDetalle de cliente: " + uid);
         System.out.println("───────────────────────────────────");

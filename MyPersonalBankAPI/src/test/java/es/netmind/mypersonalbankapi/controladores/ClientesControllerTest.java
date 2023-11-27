@@ -5,6 +5,10 @@ import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.persistencia.ClientesInMemoryRepo;
 import es.netmind.mypersonalbankapi.persistencia.IClientesRepo;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,9 +17,11 @@ import java.io.PrintStream;
 import static java.lang.System.out;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {ClientesController.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ClientesControllerTest {
 
@@ -23,6 +29,15 @@ class ClientesControllerTest {
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
+
+
+    @Autowired
+    private ClientesController cliente;
+    @Test
+    void testBeans() throws Exception {
+        assertThat(cliente, notNullValue());
+        //assertEquals(ClientesController.numeroClientes(), 13);
+    }
 
     @BeforeEach
     public void setUpStreams() {
