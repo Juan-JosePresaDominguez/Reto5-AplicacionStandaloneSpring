@@ -1,6 +1,8 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
+import es.netmind.mypersonalbankapi.exceptions.ClienteException;
 import es.netmind.mypersonalbankapi.exceptions.ClienteNotFoundException;
+import es.netmind.mypersonalbankapi.exceptions.ErrorCode;
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.modelos.clientes.Empresa;
 import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
@@ -17,8 +19,8 @@ public class ClientesDBRepo implements IClientesRepo {
 
     private static ClientesDBRepo instance;
 
-    //private static String db_url = null;
-    private String db_url = null;
+    private static String db_url = null;
+    //private String db_url = null;
 
     //La URL se debe definir en RepoConfig.java, sino se produce el error "java.sql.SQLException: The url cannot be null"
 //    public ClientesDBRepo() throws Exception {
@@ -129,44 +131,47 @@ public class ClientesDBRepo implements IClientesRepo {
     public Cliente addClient(Cliente cliente) throws Exception {
         String sql = "INSERT INTO cliente (`dtype`, `id`, `nombre`, `email`, `direccion`, `alta`, `activo`, `moroso`, `cif`, `unidades_de_negocio`, `dni`)  values (?,NULL,?,?,?,?,?,?,?,?,?)";
 
-        try (
-                Connection conn = DriverManager.getConnection(db_url);
-                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        ) {
+        if (cliente.validar()) {
+            try (
+                    Connection conn = DriverManager.getConnection(db_url);
+                    PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ) {
 
-            if (cliente instanceof Personal) {
-                stmt.setString(1, "Personal");
-                stmt.setString(8, null);
-                stmt.setString(9, null);
-                stmt.setString(10, ((Personal) cliente).getDni());
-            } else {
-                stmt.setString(1, "Empresa");
-                stmt.setString(8, ((Empresa) cliente).getCif());
-                stmt.setString(9, Arrays.toString(((Empresa) cliente).getUnidadesNegocio()));
-                stmt.setString(10, null);
+                if (cliente instanceof Personal) {
+                    stmt.setString(1, "Personal");
+                    stmt.setString(8, null);
+                    stmt.setString(9, null);
+                    stmt.setString(10, ((Personal) cliente).getDni());
+                } else {
+                    stmt.setString(1, "Empresa");
+                    stmt.setString(8, ((Empresa) cliente).getCif());
+                    stmt.setString(9, Arrays.toString(((Empresa) cliente).getUnidadesNegocio()));
+                    stmt.setString(10, null);
+                }
+
+                stmt.setString(2, cliente.getNombre());
+                stmt.setString(3, cliente.getEmail());
+                stmt.setString(4, cliente.getDireccion());
+                stmt.setString(5, cliente.getAlta().toString());
+                stmt.setBoolean(6, cliente.isActivo());
+                stmt.setBoolean(7, cliente.isMoroso());
+
+                int rows = stmt.executeUpdate();
+
+                ResultSet genKeys = stmt.getGeneratedKeys();
+                if (genKeys.next()) {
+                    cliente.setId(genKeys.getInt(1));
+                } else {
+                    throw new SQLException("Usuario creado erróneamente!!!");
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new Exception(e);
             }
-
-            stmt.setString(2, cliente.getNombre());
-            stmt.setString(3, cliente.getEmail());
-            stmt.setString(4, cliente.getDireccion());
-            stmt.setString(5, cliente.getAlta().toString());
-            stmt.setBoolean(6, cliente.isActivo());
-            stmt.setBoolean(7, cliente.isMoroso());
-
-            int rows = stmt.executeUpdate();
-
-            ResultSet genKeys = stmt.getGeneratedKeys();
-            if (genKeys.next()) {
-                cliente.setId(genKeys.getInt(1));
-            } else {
-                throw new SQLException("Usuario creado erróneamente!!!");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new Exception(e);
+        } else {
+            throw new ClienteException("Cliente no válido", ErrorCode.INVALIDCLIENT);
         }
-
         return cliente;
     }
 
@@ -238,5 +243,9 @@ public class ClientesDBRepo implements IClientesRepo {
         }
 
         return cliente;
+    }
+
+    public void setDb_url(String connectUrl) {
+        this.db_url = connectUrl;
     }
 }

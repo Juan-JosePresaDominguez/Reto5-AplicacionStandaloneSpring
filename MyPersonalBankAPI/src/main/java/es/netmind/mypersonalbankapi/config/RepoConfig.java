@@ -25,6 +25,7 @@ public class RepoConfig {
 
     @Bean
     public IClientesRepo getClientesDBRepo() throws Exception {
+        System.out.println("Creando RepoConfig...");
         ClientesDBRepo repo = new ClientesDBRepo();
         repo.setDb_url(connectUrl); //Error "java.sql.SQLException: The url cannot be null" si dejamos comentada esta línea
         return repo;

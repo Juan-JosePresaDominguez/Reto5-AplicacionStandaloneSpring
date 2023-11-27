@@ -1,25 +1,22 @@
 package es.netmind.mypersonalbankapi.controladores;
 
 import es.netmind.mypersonalbankapi.exceptions.ClienteException;
+import es.netmind.mypersonalbankapi.exceptions.ClienteNotFoundException;
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.modelos.prestamos.Prestamo;
 import es.netmind.mypersonalbankapi.persistencia.*;
 import es.netmind.mypersonalbankapi.utils.ClientesUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
 //@Component
-@Controller
 public class ClientesController {
 
     //private static IClientesRepo clientesRepo = ClientesInMemoryRepo.getInstance();
-    //private static IClientesRepo clientesRepo = ClientesInMemoryRepo.getInstance();   // RETO 4 - SGBD
-    @Autowired
+    //private static IClientesRepo clientesRepo = ClientesDBRepo.getInstance();   // RETO 4 - SGBD
+    //@Autowired
     private static IClientesRepo clientesRepo;         // RETO 5 - SPRING
     private static ICuentasRepo cuentasRepo = CuentasInMemoryRepo.getInstance();
     private static IPrestamosRepo prestamosRepo = PrestamosInMemoryRepo.getInstance();
@@ -42,12 +39,10 @@ public class ClientesController {
         }
     }
 
-    @Autowired
     public static int numeroClientes() throws Exception {
         return clientesRepo.getAll().size();
     }
 
-    @Autowired
     public static void mostrarDetalle(Integer uid) {
         System.out.println("\nDetalle de cliente: " + uid);
         System.out.println("───────────────────────────────────");
@@ -57,6 +52,8 @@ public class ClientesController {
             System.out.println(cl);
         } catch (ClienteException e) {
             System.out.println("Cliente NO encontrado 😞! \nCode: " + e.getCode());
+        } catch (ClienteNotFoundException e) {
+            System.out.println("Cliente NO encontrado 😞!");
         } catch (Exception e) {
             System.out.println("Oops ha habido un problema, inténtelo más tarde 😞!");
         }
@@ -148,5 +145,9 @@ public class ClientesController {
         }
 
 
+    }
+
+    public void setClientesRepo(IClientesRepo clientesRepo) {
+        this.clientesRepo = clientesRepo;
     }
 }
