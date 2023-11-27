@@ -1,4 +1,4 @@
-package es.netmind.mypersonalbankapi.config;
+package es.netmind.mypersonalbankapi.controladores;
 
 public interface IClientesController {
     void mostrarLista() throws Exception;
