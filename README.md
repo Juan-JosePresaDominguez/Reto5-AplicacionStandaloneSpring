@@ -15,3 +15,13 @@ Tú y tu equipo deberéis refactorizar la aplicación para añadir Spring:
 - Añade la configuración necesaria para crear los beans e inyectar las dependencias de las distintas capas.
 - Actualiza los test para que usen los mecanismos de Spring.
 - Repositorio GitHub: Juan-JosePresaDominguez/Reto5-AplicacionStandaloneSpring (github.com)
+
+PAUTAS RETO 5: Rama Spring
+1. Añade las dependencias de Spring 
+2. Actualiza los tests para que usen inyección de dependencias
+	 - Pasa los tests: fallarán
+3. Crea las clases de configuración de Spring
+4. Define los beans en las clases de configuración (recomendado para repositorios)
+5. Define los beans anotando las clases (recomendado para servicios y controllers)
+6. Pasa los tests.
+7. Creación de perfiles.
