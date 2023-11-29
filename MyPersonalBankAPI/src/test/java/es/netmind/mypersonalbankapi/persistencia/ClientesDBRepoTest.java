@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpringConfig.class})
-@ActiveProfiles("default")
+//@ActiveProfiles("default") // Ejecuta el perfil "default" aunque esté comentado.
 class ClientesDBRepoTest {
 
     @Autowired
@@ -90,7 +90,7 @@ class ClientesDBRepoTest {
     @Test
     void dadosClientes_cuandoaddCliente_entoncesClienteEmpresaInsert() throws Exception {
         //Como usuario del sistema, quiero poder registrar nuevos clientes para poder incrementar nuestro base de datos.
-        Empresa cliente = new Empresa(null, "Caixa", "caixa@c.com", "BCN", LocalDate.now(), true, false, "J12345678", new String[]{"Activo", "Garantías"});
+        Empresa cliente = new Empresa(null, "Caixa", "caixa@c.com", "BARCELONA sn", LocalDate.now(), true, false, "J12345678", new String[]{"Activo", "Garantías"});
 
         repo.addClient(cliente);
 

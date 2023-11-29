@@ -1,5 +1,7 @@
 package es.netmind.mypersonalbankapi.controladores;
 
+import es.netmind.mypersonalbankapi.persistencia.IClientesRepo;
+
 public interface IClientesController {
     void mostrarLista() throws Exception;
     int numeroClientes() throws Exception;
