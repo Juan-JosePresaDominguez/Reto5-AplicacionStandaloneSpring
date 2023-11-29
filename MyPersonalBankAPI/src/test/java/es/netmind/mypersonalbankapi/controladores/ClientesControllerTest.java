@@ -38,9 +38,8 @@ class ClientesControllerTest {
 
     @Test
     void testBeans() throws Exception {
-        System.out.println(clienteControl); //No imprime nada. No inyecta bean ClientesController ???
+        //Si queremos imprimir por pantalla información, debemos comentar el setUpStreams que camptura la salida
         assertThat(clienteControl, notNullValue());
-        //assertEquals(ClientesController.numeroClientes(), 13);
         //assertEquals(clienteControl.numeroClientes(), 26);
     }
 
