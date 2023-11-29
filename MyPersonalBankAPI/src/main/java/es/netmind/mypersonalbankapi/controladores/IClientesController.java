@@ -10,4 +10,7 @@ public interface IClientesController {
     void eliminar(Integer uid);
     void actualizar(Integer uid, String[] args);
     void evaluarPrestamo(Integer uid, Double cantidad);
+    void commitClientController();
+    void rollbackClientController();
+    void connectClientController();
 }

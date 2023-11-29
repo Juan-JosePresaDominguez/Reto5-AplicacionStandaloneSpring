@@ -12,6 +12,9 @@ import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
@@ -95,7 +98,7 @@ public class ClientesController implements IClientesController {
             boolean borrado = clientesRepo.deleteClient(cl);
             if (borrado) {
                 System.out.println("Cliente borrado 🙂!!");
-                mostrarLista();
+                this.mostrarLista();
             } else System.out.println("Cliente NO borrado 😞!! Consulte con su oficina.");
         } catch (ClienteException e) {
             System.out.println("Cliente NO encontrado 😞! \nCode: " + e.getCode());
@@ -116,7 +119,7 @@ public class ClientesController implements IClientesController {
             clientesRepo.updateClient(cl);
             System.out.println("Cliente actualizado 🙂!!");
             System.out.println(cl);
-            mostrarLista();
+            this.mostrarLista();
         } catch (ClienteException e) {
             System.out.println("Cliente NO encontrado 😞! \nCode: " + e.getCode());
         } catch (DateTimeException e) {
@@ -125,7 +128,33 @@ public class ClientesController implements IClientesController {
             System.out.println("Oops ha habido un problema, inténtelo más tarde 😞!");
             e.printStackTrace();
         }
+    }
 
+    public void connectClientController() {
+        try {
+            clientesRepo.connectClientRepo();
+        } catch (Exception e) {
+            System.out.println("ERROR en connectClientRepo");
+            e.printStackTrace();
+        }
+    }
+
+    public void commitClientController() {
+        try {
+            clientesRepo.commitClientRepo();
+        } catch (Exception e) {
+            System.out.println("ERROR en commitClientController");
+            e.printStackTrace();
+        }
+    }
+
+    public void rollbackClientController() {
+        try {
+            clientesRepo.rollbackClientRepo();
+        } catch (Exception e) {
+            System.out.println("ERROR en rollbackClientController");
+            e.printStackTrace();
+        }
     }
 
     public void evaluarPrestamo(Integer uid, Double cantidad) {

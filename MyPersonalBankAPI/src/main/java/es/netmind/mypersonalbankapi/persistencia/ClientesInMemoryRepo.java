@@ -83,4 +83,19 @@ public class ClientesInMemoryRepo implements IClientesRepo {
             throw new ClienteException("Cliente no existe", ErrorCode.NONEXISTINGCLIENT);
         } else throw new ClienteException("Cliente no válido", ErrorCode.INVALIDCLIENT);
     }
+
+    @Override
+    public void commitClientRepo() throws Exception {
+
+    }
+
+    @Override
+    public void rollbackClientRepo() throws Exception {
+
+    }
+
+    @Override
+    public void connectClientRepo() throws Exception {
+
+    }
 }

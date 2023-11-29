@@ -48,8 +48,12 @@ public class ClientesUtils {
 
         int argsLength = args.length;
 
+        System.out.println("updateClientFromArgs");
         String className = cliente.getClass().getName();
 
+        System.out.println("argsLength: " + argsLength);
+        System.out.println("className: " + className);
+        System.out.println("Traza 1");
         if (args[0] != null) cliente.setNombre(args[0]);
         if (args[1] != null) cliente.setEmail(args[1]);
         if (args[2] != null) cliente.setDireccion(args[2]);
@@ -57,17 +61,22 @@ public class ClientesUtils {
         if (args[4] != null) cliente.setActivo(Boolean.valueOf(args[4]));
         if (args[5] != null) cliente.setMoroso(Boolean.valueOf(args[5]));
 
-        if (className.contains("modelos.clientes.personal")) {
+        System.out.println("Traza 2");
+        if (className.contains("modelos.clientes.Personal")) {
+            System.out.println("Traza 3");
             Personal per = (Personal) cliente;
             if (args[6] != null) per.setDni(args[6]);
-
-            return per;
+            if (per.validar()) return per;
+            else throw new Exception();
+            //return per;
         } else {
+            System.out.println("Traza 4");
             Empresa emp = (Empresa) cliente;
             if (args[6] != null) emp.setCif(args[6]);
             if (argsLength > 7) emp.setUnidadesNegocio(args[7].split(","));
-
-            return emp;
+            if (emp.validar()) return emp;
+            else throw new Exception();
+            //return emp;
         }
 
 

@@ -22,6 +22,8 @@ public class ClientesDBRepo implements IClientesRepo {
     private static String db_url = null;
     //private String db_url = null;
 
+    private Connection conn = null;
+
     //La URL se debe definir en RepoConfig.java, sino se produce el error "java.sql.SQLException: The url cannot be null"
 //    public ClientesDBRepo() throws Exception {
 //        PropertyValues props = new PropertyValues();
@@ -46,7 +48,7 @@ public class ClientesDBRepo implements IClientesRepo {
         String sql = "SELECT * FROM cliente u WHERE 1";
 
         try (
-                Connection conn = DriverManager.getConnection(db_url);
+                //Connection conn = DriverManager.getConnection(db_url);
                 PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             ResultSet rs = stmt.executeQuery();
@@ -90,7 +92,7 @@ public class ClientesDBRepo implements IClientesRepo {
         String sql = "SELECT c.* FROM cliente c WHERE id=?";
 
         try (
-                Connection conn = DriverManager.getConnection(db_url);
+                //Connection conn = DriverManager.getConnection(db_url);
                 // ordenes sql
                 PreparedStatement pstm = conn.prepareStatement(sql);
         ) {
@@ -133,7 +135,7 @@ public class ClientesDBRepo implements IClientesRepo {
 
         if (cliente.validar()) {
             try (
-                    Connection conn = DriverManager.getConnection(db_url);
+                    //Connection conn = DriverManager.getConnection(db_url);
                     PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ) {
 
@@ -180,7 +182,7 @@ public class ClientesDBRepo implements IClientesRepo {
         String sql = "DELETE FROM cliente WHERE id=?";
 
         try (
-                Connection conn = DriverManager.getConnection(db_url);
+                //Connection conn = DriverManager.getConnection(db_url);
                 PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.setInt(1, cliente.getId());
@@ -204,23 +206,28 @@ public class ClientesDBRepo implements IClientesRepo {
     public Cliente updateClient(Cliente cliente) throws Exception {
         String sql = "UPDATE cliente SET dtype=?, nombre=?, email=?, direccion=?, alta=?, activo=?, moroso=?, cif=?, unidades_de_negocio=?, dni=? WHERE id=?";
 
-        try (
-                Connection conn = DriverManager.getConnection(db_url);
-                PreparedStatement stmt = conn.prepareStatement(sql);
-        ) {
-
+//        try (
+//                Connection conn = DriverManager.getConnection(db_url);
+//                PreparedStatement stmt = conn.prepareStatement(sql);
+//        ) {
+        try {
+            System.out.println("Traza 1");
+            PreparedStatement stmt = conn.prepareStatement(sql);
             if (cliente instanceof Personal) {
+                System.out.println("Traza 2");
                 stmt.setString(1, "Personal");
                 stmt.setString(8, null);
                 stmt.setString(9, null);
                 stmt.setString(10, ((Personal) cliente).getDni());
             } else {
+                System.out.println("Traza 3");
                 stmt.setString(1, "Empresa");
                 stmt.setString(8, ((Empresa) cliente).getCif());
                 stmt.setString(9, Arrays.toString(((Empresa) cliente).getUnidadesNegocio()));
                 stmt.setString(10, null);
             }
 
+            System.out.println("Traza 4");
             stmt.setString(2, cliente.getNombre());
             stmt.setString(3, cliente.getEmail());
             stmt.setString(4, cliente.getDireccion());
@@ -229,11 +236,12 @@ public class ClientesDBRepo implements IClientesRepo {
             stmt.setBoolean(7, cliente.isMoroso());
             stmt.setInt(11, cliente.getId());
 
+            System.out.println("Traza 5");
             int rows = stmt.executeUpdate();
 
             System.out.println(rows);
 
-            if(rows<=0){
+            if (rows <= 0) {
                 throw new ClienteNotFoundException();     // Si queremos que devuelva excepción al no encontrar cliente
             }
 
@@ -247,5 +255,37 @@ public class ClientesDBRepo implements IClientesRepo {
 
     public void setDb_url(String connectUrl) {
         this.db_url = connectUrl;
+    }
+
+    public void connectClientRepo() throws Exception {
+        try {
+            conn = DriverManager.getConnection(db_url);
+            conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+    }
+
+    public void commitClientRepo() throws Exception {
+        try //(                Connection conn = DriverManager.getConnection(db_url);)
+        {
+            conn.commit();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+    }
+
+    public void rollbackClientRepo() throws Exception {
+        try //(                Connection conn = DriverManager.getConnection(db_url);)
+        {
+            conn.rollback();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
     }
 }

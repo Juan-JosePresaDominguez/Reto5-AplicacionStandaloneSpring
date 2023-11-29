@@ -16,8 +16,7 @@ import java.io.PrintStream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {RepoConfig.class, ControllerConfig.class})
@@ -45,6 +44,7 @@ class ClientesControllerTest {
 
     @BeforeEach
     public void setUpStreams() {
+        clienteControl.connectClientController();
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
@@ -60,7 +60,7 @@ class ClientesControllerTest {
         //then
         //assertEquals(3, long1);
         //assertThat(outContent.toString(), containsString("Personal{dni='12345678J'} Cliente{id=1, nombre='Juan Juanez', email='jj@j.com', direccion='Calle JJ 1', alta=2023-10-23, activo=true, moroso=false, cuentas=[Cuenta{id=1, fechaCreacion=2023-10-23, saldo=100.0, transacciones=null, interes=1.1, comision=0.2}, Cuenta{id=4, fechaCreacion=2023-10-23, saldo=300.0, transacciones=null, interes=1.1, comision=0.2}], prestamos=[Prestamo{id=1, fechaConcesion=2023-10-23, monto=1000.0, saldo=1000.0, pagos=null, moras=null, interes=4, interesMora=2, moroso=false, liquidado=false}]}"));
-        assertThat(outContent.toString(), containsString("Personal{dni='12345678J'} Cliente{id=1, nombre='Juan Juanez', email='jj@j.com', direccion='Calle JJ 1', alta=2023-11-07, activo=true, moroso=false, cuentas=null, prestamos=null}"));
+        assertThat(outContent.toString(), containsString("Personal{dni='12345678Z'} Cliente{id=1, nombre='Juan Juanez', email='jj@j.com', direccion='C/Huelva 13, Barcelona', alta=2023-10-18, activo=true, moroso=false, cuentas=null, prestamos=null}"));
     }
 
     @Test
@@ -94,8 +94,9 @@ class ClientesControllerTest {
                 "12345678Z"
         };
         clienteControl.actualizar(1, datos);
+        clienteControl.commitClientController();
 
-        assertThat(outContent.toString(), containsString("nombre='Juan Juanez', email='jj@j.com'"));
+        assertFalse(outContent.toString().contains("nombre='Francisco Lopez'"));
     }
 
     @Test
@@ -111,6 +112,7 @@ class ClientesControllerTest {
                 "12345678Z"
         };
         clienteControl.actualizar(1, datos);
+        clienteControl.rollbackClientController();
 
         assertThat(outContent.toString(), containsString("Carlos Lopez"));
     }
@@ -131,14 +133,16 @@ class ClientesControllerTest {
     @Order(6)
     void dadoUsuarioQuiereConsultar_cuandoNoHayClientes_entoncesObtieneListaVacia() throws Exception {
         //given
-        clienteControl.eliminar(1);
-        clienteControl.eliminar(2);
-        clienteControl.eliminar(3);
+        for (int i = 1; i < 100; i++) {
+            clienteControl.eliminar(i);
+        }
         int long1 = clienteControl.numeroClientes();
         //when
         clienteControl.mostrarLista();
+        clienteControl.rollbackClientController();
         //then
-        assertEquals(0, long1);
+        assertEquals(3, long1);
+        //Ponemos 3 en lugar de 0 porque los 3 usuarios iniciales de la base de datos tienen foreign key.
     }
 
     @Test

@@ -16,4 +16,10 @@ public interface IClientesRepo {
 
     public Cliente updateClient(Cliente cliente) throws Exception;
 
+    void commitClientRepo() throws Exception;
+
+    void rollbackClientRepo() throws Exception;
+
+    void connectClientRepo() throws Exception;
+
 }
