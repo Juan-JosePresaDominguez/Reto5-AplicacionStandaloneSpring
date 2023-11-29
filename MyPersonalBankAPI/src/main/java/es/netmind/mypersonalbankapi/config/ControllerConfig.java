@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class ControllerConfig {
-    @Autowired
+    /*@Autowired
     IClientesRepo clientesRepo;
 
     @Bean
@@ -19,6 +19,6 @@ public class ControllerConfig {
         ClientesController clientes = new ClientesController();
         clientes.setClientesRepo(clientesRepo);
         return clientes;
-    }
+    }*/
 }
 

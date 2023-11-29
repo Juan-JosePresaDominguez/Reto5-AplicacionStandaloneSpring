@@ -1,13 +1,19 @@
 package es.netmind.mypersonalbankapi;
 
-import es.netmind.mypersonalbankapi.controladores.ClientesController;
 import es.netmind.mypersonalbankapi.controladores.CuentasController;
+import es.netmind.mypersonalbankapi.controladores.IClientesController;
 import es.netmind.mypersonalbankapi.controladores.PrestamosController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+@Component
 public class Main {
-    public static void main(String[] args) {
+    @Autowired
+    private IClientesController clienteControl;
+
+    public void main(String[] args) {
         System.out.println("╔════════════════════════╗");
         System.out.println("║  MY PERSONAL BANK API  ║");
         System.out.println("╚════════════════════════╝");
@@ -27,7 +33,7 @@ public class Main {
 
     }
 
-    private static void procesarArgumentos(String[] args) throws Exception {
+    private void procesarArgumentos(String[] args) throws Exception {
         int argsLength = args.length;
         String arg0 = args[0].toLowerCase();
         String arg1 = args[1].toLowerCase();
@@ -48,16 +54,16 @@ public class Main {
 
     }
 
-    private static void procesarArgumentosClientes(String[] args) throws Exception {
+    private void procesarArgumentosClientes(String[] args) throws Exception {
         int argsLength = args.length;
         String arg1 = args[1].toLowerCase();
 
-        if (arg1.equals("list")) ClientesController.mostrarLista();
-        else if (arg1.equals("add")) ClientesController.add(Arrays.copyOfRange(args, 2, argsLength));
-        else if (arg1.equals("remove")) ClientesController.eliminar(Integer.valueOf(args[2]));
+        if (arg1.equals("list")) clienteControl.mostrarLista();
+        else if (arg1.equals("add")) clienteControl.add(Arrays.copyOfRange(args, 2, argsLength));
+        else if (arg1.equals("remove")) clienteControl.eliminar(Integer.valueOf(args[2]));
         else if (arg1.equals("update"))
-            ClientesController.actualizar(Integer.valueOf(args[2]), Arrays.copyOfRange(args, 3, argsLength));
-        else if (argsLength == 2) ClientesController.mostrarDetalle(Integer.valueOf(arg1));
+            clienteControl.actualizar(Integer.valueOf(args[2]), Arrays.copyOfRange(args, 3, argsLength));
+        else if (argsLength == 2) clienteControl.mostrarDetalle(Integer.valueOf(arg1));
     }
 
     private static void procesarArgumentosCuentas(String[] args) {
@@ -88,12 +94,12 @@ public class Main {
         else mostrarInstrucciones();
     }
 
-    private static void procesarArgumentosEvaluacionPrestamo(String[] args) {
+    private void procesarArgumentosEvaluacionPrestamo(String[] args) {
         int argsLength = args.length;
         int uid = Integer.valueOf(args[1]);
         Double cantidad = argsLength >= 4 ? Double.valueOf(args[3]) : 0;
         if (cantidad > 0) {
-            ClientesController.evaluarPrestamo(uid, cantidad);
+            clienteControl.evaluarPrestamo(uid, cantidad);
         } else mostrarInstrucciones();
     }
 
